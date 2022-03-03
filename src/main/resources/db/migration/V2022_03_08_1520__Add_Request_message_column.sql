@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN request_message VARCHAR NOT NULL;

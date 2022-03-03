@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: ${AAAS_POSTGRES_URL}
+    username: ${AAAS_POSTGRES_USER}
+    password: ${AAAS_POSTGRES_PASS}
+    driver-class-name: org.postgresql.Driver
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASS}
+  flyway:
+    baseline-on-migrate: true
+
+telegram:
+  token: ${TELEGRAM_BOT_TOKEN}
+  bot-username: ${TELEGRAM_BOT_USERNAME}
+  webhook-path: ${TELEGRAM_BOT_WEBHOOK_PATH}
+
+frontend.url: ${FRONTEND_URL}
+
+server:
+  port: 8443
+  ssl:
+    key-alias: ${JKS_KEY_ALIAS}
+    key-store-type: JKS
+    key-store-password: ${JKS_KEYSTORE_PASSWORD}
+    key-password: ${JKS_KEY_PASSWORD}
+    key-store: classpath:${JKS_KEYSTORE_NAME}
+    trust-store-type: JKS
+    trust-store: classpath:${JKS_TRUSTSTORE_NAME}
+    trust-store-password: ${JKS_TRUSTSTORE_PASSWORD}

@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  aaas-postgres-database:
+    image: 'postgres:13.1-alpine'
+    container_name: aaas-postgres-database
+    restart: always
+    volumes:
+      - aaas-data:/var/lib/postgresql/data
+    ports:
+      - '${POSTGRES_PORT}:5432'
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+
+  aaas-redis-database:
+    image: 'bitnami/redis:6.0.16'
+    container_name: aaas-redis-database
+    restart: always
+    ports:
+      - '${REDIS_PORT}:6379'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+volumes:
+  aaas-data:
+    driver: local
