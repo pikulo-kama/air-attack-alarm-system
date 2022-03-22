@@ -1,8 +1,8 @@
 package com.adrabazha.air.attack.alarm.system.telegram;
 
+import com.adrabazha.air.attack.alarm.system.service.UserStateService;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
-import com.adrabazha.air.attack.alarm.system.service.UserService;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.TelegramInputHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.proxy.HandlerWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,23 +17,22 @@ import java.util.stream.Collectors;
 
 import static com.adrabazha.air.attack.alarm.system.utils.MessageConstants.BUILD_WINDOW_COMMAND;
 import static com.adrabazha.air.attack.alarm.system.utils.MessageConstants.RETURN_COMMAND;
-import static java.util.Objects.nonNull;
 
 @Component
 @Slf4j
 public class TelegramUpdateFacade {
 
-    private final UserService userService;
+    private final UserStateService userStateService;
     private final Map<? extends Class<? extends TelegramInputHandler>, TelegramInputHandler> handlers;
 
-    public TelegramUpdateFacade(UserService userService, List<TelegramInputHandler> handlers) {
-        this.userService = userService;
+    public TelegramUpdateFacade(UserStateService userStateService, List<TelegramInputHandler> handlers) {
+        this.userStateService = userStateService;
         this.handlers = handlers.stream().collect(Collectors.toMap(TelegramInputHandler::getClass, handler -> handler));
     }
 
     public SendMessageWrapper handle(Update update) {
         SendMessageWrapper wrappedMessage = null;
-        UserState userState = userService.getOrCreateState(update.getMessage().getFrom().getId().toString());
+        UserState userState = userStateService.getOrCreateState(update.getMessage().getFrom().getId().toString());
 
         try {
             Class<?> handlerClassName = Class.forName(userState.getCurrentHandler());
@@ -41,7 +40,7 @@ public class TelegramUpdateFacade {
 
             if (isReturnCommand(update) && handler.hasPredecessor()) {
                 userState.setCurrentHandler(handler.getPredecessor().getName());
-                userService.updateState(userState);
+                userStateService.updateState(userState);
 
                 update.getMessage().setText(BUILD_WINDOW_COMMAND);
                 handler = handlers.get(handler.getPredecessor());

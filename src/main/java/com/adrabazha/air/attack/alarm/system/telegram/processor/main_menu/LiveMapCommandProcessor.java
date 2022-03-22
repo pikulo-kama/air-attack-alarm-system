@@ -43,6 +43,6 @@ public class LiveMapCommandProcessor implements CommandProcessor<MainMenuHandler
 
     @Override
     public Integer getPosition() {
-        return 3;
+        return 4;
     }
 }

@@ -1,7 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.service;
 
 import com.adrabazha.air.attack.alarm.system.dto.DistrictMapStateObject;
-import com.adrabazha.air.attack.alarm.system.dto.DistrictStateObject;
 import com.adrabazha.air.attack.alarm.system.model.AlarmState;
 import com.adrabazha.air.attack.alarm.system.model.domain.District;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -33,6 +31,13 @@ public class DistrictServiceImpl implements DistrictService, DistrictStateServic
     @Override
     public List<District> findAll() {
         return districtRepository.findAll();
+    }
+
+    @Override
+    public District findByCode(String districtCode) {
+        return districtRepository.findByCode(districtCode)
+                .orElseThrow(() ->
+                        new RuntimeException(format("'%s' is incorrect district code", districtCode)));
     }
 
     @Override
@@ -83,9 +88,7 @@ public class DistrictServiceImpl implements DistrictService, DistrictStateServic
             return districtState.get();
         }
 
-        District district = districtRepository.findByCode(districtCode)
-                .orElseThrow(() -> new RuntimeException(format("'%s' is incorrect district code", districtCode)));
-
+        District district = findByCode(districtCode);
         return districtStateRepository.save(mapToDistrictState(district));
     }
 

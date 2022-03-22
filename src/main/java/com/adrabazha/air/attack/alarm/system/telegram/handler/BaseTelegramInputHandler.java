@@ -2,11 +2,11 @@ package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.proxy.CommandProcessorWrapper;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
@@ -23,10 +23,14 @@ import static com.adrabazha.air.attack.alarm.system.utils.MessageConstants.START
 abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implements TelegramInputHandler {
 
     private final Map<String, CommandProcessor<T>> processors;
+    protected final UserStateService userStateService;
     protected final UserService userService;
 
-    protected BaseTelegramInputHandler(List<CommandProcessor<T>> processors, UserService userService) {
+    protected BaseTelegramInputHandler(List<CommandProcessor<T>> processors,
+                                       UserService userService,
+                                       UserStateService userStateService) {
         this.processors = formatProcessors(processors);
+        this.userStateService = userStateService;
         this.userService = userService;
     }
 
@@ -60,7 +64,7 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
 
     @Override
     public List<KeyboardRow> getReplyKeyboard(Update update) {
-        Boolean isAdmin = userService.isAdministrator(update.getMessage().getFrom().getId().toString());
+        Boolean isAdmin = userService.isAdministrator(update);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -88,9 +92,9 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
     }
 
     private void updateUserState(Update update) {
-        UserState state = userService.getOrCreateState(update.getMessage().getFrom().getId().toString());
+        UserState state = userStateService.getOrCreateState(update.getMessage().getFrom().getId().toString());
         state.setCurrentHandler(this.getClass().getName());
-        userService.updateState(state);
+        userStateService.updateState(state);
     }
 
     private Map<String, CommandProcessor<T>> formatProcessors(List<CommandProcessor<T>> processors) {

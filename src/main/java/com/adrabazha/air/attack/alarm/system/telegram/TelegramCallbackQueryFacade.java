@@ -1,6 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.telegram;
 
-import com.adrabazha.air.attack.alarm.system.telegram.callback.CallbackQueryHandler;
+import com.adrabazha.air.attack.alarm.system.telegram.callback.CallbackHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import com.adrabazha.air.attack.alarm.system.utils.CallbackDataHelper;
 import org.springframework.stereotype.Component;
@@ -13,17 +13,17 @@ import java.util.stream.Collectors;
 @Component
 public class TelegramCallbackQueryFacade {
 
-    private final Map<? extends Class<? extends CallbackQueryHandler>, CallbackQueryHandler> callbackHandlers;
+    private final Map<? extends Class<? extends CallbackHandler>, CallbackHandler> callbackHandlers;
 
-    public TelegramCallbackQueryFacade(List<CallbackQueryHandler> queryHandlers) {
+    public TelegramCallbackQueryFacade(List<CallbackHandler> queryHandlers) {
         callbackHandlers = queryHandlers.stream()
-                .collect(Collectors.toMap(CallbackQueryHandler::getClass, handler -> handler));
+                .collect(Collectors.toMap(CallbackHandler::getClass, handler -> handler));
     }
 
     public SendMessageWrapper handle(Update update) {
         Class<?> handlerClassName = CallbackDataHelper.getQueryHandler(update.getCallbackQuery().getData());
 
-        CallbackQueryHandler queryHandler = callbackHandlers.get(handlerClassName);
+        CallbackHandler queryHandler = callbackHandlers.get(handlerClassName);
         return queryHandler.handle(update);
     }
 }

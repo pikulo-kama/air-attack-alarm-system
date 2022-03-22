@@ -1,19 +1,15 @@
 package com.adrabazha.air.attack.alarm.system.service;
 
 import com.adrabazha.air.attack.alarm.system.model.domain.User;
-import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
-
-import java.util.Optional;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface UserService {
 
-    Optional<User> findByTelegramUserId(String userId);
+    User findOrCreate(Update update);
 
-    UserState getOrCreateState(String userId);
+    User getUserByTelegramId(String telegramUserId);
 
-    UserState updateState(UserState userState);
+    Boolean isAdministrator(Update update);
 
-    Boolean isAdministrator(String userId);
-
-    User createUser(User user);
+    User updateUser(User persistedUser);
 }

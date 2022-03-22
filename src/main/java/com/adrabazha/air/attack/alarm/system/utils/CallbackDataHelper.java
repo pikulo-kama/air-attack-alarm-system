@@ -1,12 +1,10 @@
 package com.adrabazha.air.attack.alarm.system.utils;
 
-import com.adrabazha.air.attack.alarm.system.telegram.callback.BaseCallbackQueryHandler;
-import com.adrabazha.air.attack.alarm.system.telegram.callback.CallbackQueryHandler;
+import com.adrabazha.air.attack.alarm.system.telegram.callback.CallbackHandler;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CallbackDataHelper {
 
@@ -47,7 +45,7 @@ public class CallbackDataHelper {
             return this;
         }
 
-        public PayloadBuilder setCallbackQueryHandler(Class<? extends CallbackQueryHandler> handler) {
+        public PayloadBuilder setCallbackQueryHandler(Class<? extends CallbackHandler> handler) {
             callbackQueryHandler = handler.getSimpleName();
             return this;
         }

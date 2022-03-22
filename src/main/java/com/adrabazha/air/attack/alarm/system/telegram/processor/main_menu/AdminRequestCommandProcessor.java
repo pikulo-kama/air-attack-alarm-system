@@ -1,23 +1,23 @@
 package com.adrabazha.air.attack.alarm.system.telegram.processor.main_menu;
 
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
-import com.adrabazha.air.attack.alarm.system.service.UserService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.telegram.handler.MainMenuHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.SubmitAdministrationRequestHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.TelegramInputHandler;
-import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
-import com.adrabazha.air.attack.alarm.system.telegram.handler.MainMenuHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
+import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 public class AdminRequestCommandProcessor implements CommandProcessor<MainMenuHandler> {
 
-    private final UserService userService;
+    private final UserStateService userStateService;
     public static final String COMMAND_NAME = "Хочу повідомляти про небезпеку \uD83E\uDD20";
 
-    public AdminRequestCommandProcessor(UserService userService) {
-        this.userService = userService;
+    public AdminRequestCommandProcessor(UserStateService userStateService) {
+        this.userStateService = userStateService;
     }
 
     @Override
@@ -31,9 +31,9 @@ public class AdminRequestCommandProcessor implements CommandProcessor<MainMenuHa
 
         wrapper.setText(message);
 
-        UserState userState = userService.getOrCreateState(update.getMessage().getFrom().getId().toString());
+        UserState userState = userStateService.getOrCreateState(update.getMessage().getFrom().getId().toString());
         userState.setCurrentHandler(SubmitAdministrationRequestHandler.class.getName());
-        userService.updateState(userState);
+        userStateService.updateState(userState);
 
         return wrapper;
     }
@@ -50,7 +50,7 @@ public class AdminRequestCommandProcessor implements CommandProcessor<MainMenuHa
 
     @Override
     public Integer getPosition() {
-        return 2;
+        return 3;
     }
 
     @Override
