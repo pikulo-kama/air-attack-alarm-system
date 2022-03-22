@@ -1,6 +1,7 @@
 package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
 import com.adrabazha.air.attack.alarm.system.service.UserService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.main_menu.AdminRequestCommandProcessor;
 import org.springframework.stereotype.Component;
@@ -13,8 +14,9 @@ import java.util.List;
 public class MainMenuHandler extends BaseTelegramInputHandler<MainMenuHandler> {
 
     public MainMenuHandler(List<CommandProcessor<MainMenuHandler>> processors,
-                           UserService userService) {
-        super(processors, userService);
+                           UserService userService,
+                           UserStateService userStateService) {
+        super(processors, userService, userStateService);
     }
 
     @Override
@@ -29,9 +31,8 @@ public class MainMenuHandler extends BaseTelegramInputHandler<MainMenuHandler> {
     @Override
     public List<KeyboardRow> getReplyKeyboard(Update update) {
         List<KeyboardRow> replyKeyboard = super.getReplyKeyboard(update);
-        Boolean isAdmin = userService.isAdministrator(update.getMessage().getFrom().getId().toString());
 
-        if (isAdmin) {
+        if (userService.isAdministrator(update)) {
             replyKeyboard.removeIf(keyboardRow -> keyboardRow.contains(AdminRequestCommandProcessor.COMMAND_NAME));
         }
         return replyKeyboard;

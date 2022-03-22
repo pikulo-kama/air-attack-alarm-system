@@ -1,15 +1,15 @@
 package com.adrabazha.air.attack.alarm.system.telegram.processor.main_menu;
 
-import com.adrabazha.air.attack.alarm.system.telegram.handler.DistrictSearchInputHandler;
-import com.adrabazha.air.attack.alarm.system.telegram.handler.TelegramInputHandler;
-import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import com.adrabazha.air.attack.alarm.system.telegram.handler.AlertSubscriptionHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.MainMenuHandler;
+import com.adrabazha.air.attack.alarm.system.telegram.handler.TelegramInputHandler;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
+import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class ChangeAlertStateCommandProcessor implements CommandProcessor<MainMenuHandler> {
+public class AddSubscriptionCommandProcessor implements CommandProcessor<MainMenuHandler> {
 
     @Override
     public SendMessageWrapper process(Update update) {
@@ -18,21 +18,21 @@ public class ChangeAlertStateCommandProcessor implements CommandProcessor<MainMe
 
     @Override
     public String getCommandName() {
-        return "\uD83C\uDF0B Оновити дані про стан сирен \uD83D\uDDFB";
+        return "Хочу отримувати сповіщення про тривогу";
     }
 
     @Override
     public Boolean isAccessRestricted() {
-        return true;
+        return false;
     }
 
     @Override
     public Integer getPosition() {
-        return 2;
+        return 1;
     }
 
     @Override
     public Class<? extends TelegramInputHandler> getRedirectToHandler() {
-        return DistrictSearchInputHandler.class;
+        return AlertSubscriptionHandler.class;
     }
 }

@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.List;
 
-public abstract class BaseCallbackQueryHandler implements CallbackQueryHandler {
+public abstract class BaseCallbackHandler implements CallbackHandler {
 
     @Override
     public SendMessageWrapper handle(Update update) {

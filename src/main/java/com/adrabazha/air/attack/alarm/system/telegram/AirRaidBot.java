@@ -14,7 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -84,6 +83,7 @@ public class AirRaidBot extends TelegramWebhookBot {
         executeAsync(getEditMessage(wrapper));
     }
 
+    @SneakyThrows
     private void sendKeyboard(SendMessageWrapper wrapper) {
         List<KeyboardRow> replyKeyboard = wrapper.getReplyKeyboard();
         SendMessage message = SendMessage.builder()
@@ -94,11 +94,7 @@ public class AirRaidBot extends TelegramWebhookBot {
                         .keyboard(replyKeyboard)
                         .build())
                 .build();
-        try {
-            executeAsync(message);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-        }
+        executeAsync(message);
     }
 
     @SneakyThrows

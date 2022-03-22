@@ -9,5 +9,7 @@ public interface DistrictService {
 
     List<District> findAll();
 
+    District findByCode(String districtCode);
+
     List<DistrictMapStateObject> getGeoData();
 }

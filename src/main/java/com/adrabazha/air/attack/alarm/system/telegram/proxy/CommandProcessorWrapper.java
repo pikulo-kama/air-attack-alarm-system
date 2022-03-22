@@ -18,9 +18,7 @@ public class CommandProcessorWrapper<H extends TelegramInputHandler> implements 
 
     @Override
     public SendMessageWrapper process(Update update) {
-        Boolean userIsAdmin = userService.isAdministrator(update.getMessage().getFrom().getId().toString());
-
-        if (isAccessRestricted(userIsAdmin)) {
+        if (isAccessRestricted(update)) {
             return buildAccessRestrictedMessage(update);
         }
         return commandProcessor.process(update);
@@ -41,8 +39,8 @@ public class CommandProcessorWrapper<H extends TelegramInputHandler> implements 
         return commandProcessor.getPosition();
     }
 
-    private boolean isAccessRestricted(Boolean userIsAdmin) {
-        return isAccessRestricted() && !userIsAdmin;
+    private boolean isAccessRestricted(Update update) {
+        return isAccessRestricted() && userService.isAdministrator(update);
     }
 
     private SendMessageWrapper buildAccessRestrictedMessage(Update update) {

@@ -25,7 +25,11 @@ public class User {
 
     private String telegramUserId;
 
+    private String chatId;
+
     private String telegramUsername;
+
+    private Boolean administrationRequestSent;
 
     private String requestMessage;
 
