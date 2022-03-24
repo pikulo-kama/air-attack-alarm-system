@@ -18,7 +18,7 @@ public class ChangeAlertStateCommandProcessor implements CommandProcessor<MainMe
 
     @Override
     public String getCommandName() {
-        return "\uD83C\uDF0B Оновити дані про стан сирен \uD83D\uDDFB";
+        return ":volcano: Оновити дані про стан сирен :mount_fuji:";
     }
 
     @Override

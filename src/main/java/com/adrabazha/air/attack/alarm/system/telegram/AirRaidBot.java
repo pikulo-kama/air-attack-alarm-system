@@ -1,8 +1,12 @@
 package com.adrabazha.air.attack.alarm.system.telegram;
 
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomEditMessageText;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomSendMessage;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import com.vdurmont.emoji.EmojiParser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.internal.inject.Custom;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
@@ -14,6 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
@@ -83,18 +88,18 @@ public class AirRaidBot extends TelegramWebhookBot {
         executeAsync(getEditMessage(wrapper));
     }
 
-    @SneakyThrows
     private void sendKeyboard(SendMessageWrapper wrapper) {
-        List<KeyboardRow> replyKeyboard = wrapper.getReplyKeyboard();
-        SendMessage message = SendMessage.builder()
-                .protectContent(true)
-                .chatId(wrapper.getChatId())
-                .text("\uD83C\uDDFA\uD83C\uDDE6")
-                .replyMarkup(ReplyKeyboardMarkup.builder()
-                        .keyboard(replyKeyboard)
-                        .build())
-                .build();
-        executeAsync(message);
+        CustomSendMessage message = new CustomSendMessage();
+        message.setChatId(wrapper.getChatId());
+        message.setText(":ua:");
+        message.setReplyMarkup(ReplyKeyboardMarkup.builder()
+                        .keyboard(wrapper.getReplyKeyboard())
+                        .build());
+        try {
+            executeAsync(message);
+        } catch (TelegramApiException exception) {
+            log.error(exception.getMessage());
+        }
     }
 
     @SneakyThrows
@@ -107,7 +112,7 @@ public class AirRaidBot extends TelegramWebhookBot {
     }
 
     private EditMessageText getEditMessage(SendMessageWrapper wrapper) {
-        EditMessageText editMessage = new EditMessageText();
+        CustomEditMessageText editMessage = new CustomEditMessageText();
         editMessage.setChatId(wrapper.getChatId());
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();

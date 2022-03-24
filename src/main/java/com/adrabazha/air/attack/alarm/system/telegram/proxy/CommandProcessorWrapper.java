@@ -40,7 +40,7 @@ public class CommandProcessorWrapper<H extends TelegramInputHandler> implements 
     }
 
     private boolean isAccessRestricted(Update update) {
-        return isAccessRestricted() && userService.isAdministrator(update);
+        return isAccessRestricted() && !userService.isAdministrator(update);
     }
 
     private SendMessageWrapper buildAccessRestrictedMessage(Update update) {

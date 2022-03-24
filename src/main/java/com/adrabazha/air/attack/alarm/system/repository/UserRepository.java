@@ -1,6 +1,5 @@
 package com.adrabazha.air.attack.alarm.system.repository;
 
-import com.adrabazha.air.attack.alarm.system.dto.UserSubscription;
 import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

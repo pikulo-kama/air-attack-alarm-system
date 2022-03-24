@@ -31,7 +31,7 @@ public class SubmitAdministrationRequestHandler extends BaseTelegramInputHandler
 
         Long userId = persistedUser.getId();
         if (persistedUser.getAdministrationRequestSent()) {
-            wrapper.setText(format("Ваша заявка розглядається \uD83E\uDDD0%nНомер вашої заявки - *#%d*", userId));
+            wrapper.setText(format("Ваша заявка розглядається :face_with_monocle:%nНомер вашої заявки - *#%d*", userId));
         } else {
             persistedUser.setAdministrationRequestSent(true);
             persistedUser.setRequestMessage(update.getMessage().getText());
@@ -44,7 +44,9 @@ public class SubmitAdministrationRequestHandler extends BaseTelegramInputHandler
 
     @Override
     protected String defaultMessage() {
-        return "Скажіть пару слів про себе, та чим ви займаєтесь";
+        return "Хочете допомогти країні і повідомляти людей про небезпеку?\n\n" +
+                "Гаразд! Давайте спробуєм, залиште повідомлення з метою вашого запиту," +
+                " та вкажіть скільки часу ви готові приділяти цій справі.";
     }
 
     @Override

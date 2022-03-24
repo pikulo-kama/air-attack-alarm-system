@@ -1,6 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.telegram.wrapper;
 
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 
 import java.util.List;
 import java.util.function.Function;
@@ -13,7 +13,7 @@ public class ConditionalSendMessageWrapperBuilder<T> {
     private String multiResponseMessageHeader;
     private Function<T, String> singleResponseMessageFunction;
     private Function<T, String> multiResponseMessageFunction;
-    private Function<T, InlineKeyboardButton> keyboardButtonFunction;
+    private Function<T, CustomInlineKeyboardButton> keyboardButtonFunction;
 
     public ConditionalSendMessageWrapperBuilder<T> chatId(String chatId) {
         this.chatId = chatId;
@@ -30,7 +30,7 @@ public class ConditionalSendMessageWrapperBuilder<T> {
         return this;
     }
 
-    public ConditionalSendMessageWrapperBuilder<T> provideSingleResponseKeyboardButton(Function<T, InlineKeyboardButton> keyboardButtonFunction) {
+    public ConditionalSendMessageWrapperBuilder<T> provideSingleResponseKeyboardButton(Function<T, CustomInlineKeyboardButton> keyboardButtonFunction) {
         this.keyboardButtonFunction = keyboardButtonFunction;
         return this;
     }
@@ -55,7 +55,7 @@ public class ConditionalSendMessageWrapperBuilder<T> {
 
         } else if (conditionalDataset.size() == 1) {
             String message = singleResponseMessageFunction.apply(conditionalDataset.get(0));
-            InlineKeyboardButton button = keyboardButtonFunction.apply(conditionalDataset.get(0));
+            CustomInlineKeyboardButton button = keyboardButtonFunction.apply(conditionalDataset.get(0));
 
             wrapper.setText(message);
             wrapper.addInlineButton(button);

@@ -18,7 +18,7 @@ public class AddSubscriptionCommandProcessor implements CommandProcessor<MainMen
 
     @Override
     public String getCommandName() {
-        return "Хочу отримувати сповіщення про тривогу";
+        return "Хочу отримувати сповіщення про тривогу :e-mail: :hand_with_index_and_middle_fingers_crossed:";
     }
 
     @Override

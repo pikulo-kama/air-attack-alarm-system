@@ -6,11 +6,11 @@ import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import com.adrabazha.air.attack.alarm.system.service.DistrictService;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 
@@ -54,7 +54,8 @@ public class SubscriptionChangeCallbackHandler extends BaseCallbackHandler {
         UserSubscription subscription = UserSubscription.of(district.getCode(), district.getName(), isSubscribed);
 
         wrapper.setText(subscription.buildExtendedSubscriptionMessage());
-        InlineKeyboardButton button = new InlineKeyboardButton(subscription.getSubscriptionState().getButtonName());
+        CustomInlineKeyboardButton button = new CustomInlineKeyboardButton();
+        button.setText(subscription.getSubscriptionState().getButtonName());
         button.setCallbackData(subscription.buildCallbackData());
         wrapper.addInlineButton(button);
 
