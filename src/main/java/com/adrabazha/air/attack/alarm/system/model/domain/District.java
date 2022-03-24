@@ -3,7 +3,6 @@ package com.adrabazha.air.attack.alarm.system.model.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;

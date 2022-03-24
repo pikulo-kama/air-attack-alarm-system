@@ -13,6 +13,7 @@ public class OnAirRaidStartedEventListener extends AirRaidApplicationListener<Ai
                                        SubscriptionService subscriptionService,
                                        DistrictService districtService) {
         super(bot, subscriptionService, districtService, (district, user) ->
-                String.format("Увага!!! Повітряна тривога на території області - %s", district.getName()));
+                String.format(":warning: Увага!!! Повітряна тривога на території області - *%s*%n%n" +
+                        "Відправляйтесь до найближчого укриття, або тримайтесь подалі від вікон :pray:", district.getName()));
     }
 }

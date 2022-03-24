@@ -6,6 +6,7 @@ import com.adrabazha.air.attack.alarm.system.service.UserStateService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.proxy.CommandProcessorWrapper;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import com.vdurmont.emoji.EmojiParser;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -37,7 +38,7 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
     @Override
     public SendMessageWrapper handle(Update update) {
         SendMessageWrapper wrapper;
-        String command = update.getMessage().getText();
+        String command = parseEmojis(update);
 
         if (processors.keySet().contains(command)) {
             CommandProcessorWrapper<T> processor = new CommandProcessorWrapper<>(processors.get(command), userService);
@@ -73,7 +74,7 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
                 return;
             }
             KeyboardRow row = new KeyboardRow();
-            row.add(processor.getCommandName());
+            row.add(EmojiParser.parseToUnicode(processor.getCommandName()));
             keyboard.add(row);
         });
         return keyboard;
@@ -82,13 +83,17 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
     @Override
     public Optional<Class<? extends TelegramInputHandler>> getRedirectCommand(Update update) {
         Optional<Class<? extends TelegramInputHandler>> optionalClass = Optional.empty();
-        String command = update.getMessage().getText();
+        String command = parseEmojis(update);
 
         if (processors.keySet().contains(command)) {
             CommandProcessor<T> processor = processors.get(command);
             optionalClass = Optional.ofNullable(processor.getRedirectToHandler());
         }
         return optionalClass;
+    }
+
+    private String parseEmojis(Update update) {
+        return EmojiParser.parseToAliases(update.getMessage().getText());
     }
 
     private void updateUserState(Update update) {

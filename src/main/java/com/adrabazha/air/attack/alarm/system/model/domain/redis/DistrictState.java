@@ -1,7 +1,7 @@
 package com.adrabazha.air.attack.alarm.system.model.domain.redis;
 
 import com.adrabazha.air.attack.alarm.system.model.AlarmState;
-import com.adrabazha.air.attack.alarm.system.telegram.callback.ChangeAlarmStateCallbackHandler;
+import com.adrabazha.air.attack.alarm.system.telegram.callback.AlarmStateChangeCallbackHandler;
 import com.adrabazha.air.attack.alarm.system.utils.CallbackDataHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +32,7 @@ public class DistrictState {
 
     public String buildCallbackData() {
         return CallbackDataHelper.payloadBuilder()
-                .setCallbackQueryHandler(ChangeAlarmStateCallbackHandler.class)
+                .setCallbackQueryHandler(AlarmStateChangeCallbackHandler.class)
                 .simpleDataUnit(districtCode)
                 .build();
     }

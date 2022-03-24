@@ -4,12 +4,12 @@ import com.adrabazha.air.attack.alarm.system.dto.UserSubscription;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
 import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.ConditionalSendMessageWrapperBuilder;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class AlertSubscriptionHandler extends BaseTelegramInputHandler<AlertSubs
     @Override
     protected String defaultMessage() {
         return "Введіть назву області або її частину щоб переглянути" +
-                " щоб переглянучи чи змінити стан підписки на розсилку сповіщеннь";
+                " чи змінити оповіщення про тривогу :cop:";
     }
 
     @Override
@@ -43,18 +43,18 @@ public class AlertSubscriptionHandler extends BaseTelegramInputHandler<AlertSubs
         return new ConditionalSendMessageWrapperBuilder<UserSubscription>()
                 .chatId(update.getMessage().getChatId().toString())
 
-                .notFoundResponseMessage("За вашим запитом нічого не знайдено")
+                .notFoundResponseMessage(":thinking: За вашим запитом нічого не знайдено\nСпробуйте ще раз")
 
                 .provideSingleResponseMessage(UserSubscription::buildExtendedSubscriptionMessage)
                 .provideSingleResponseKeyboardButton(subscription -> {
-                    InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                    CustomInlineKeyboardButton inlineKeyboardButton = new CustomInlineKeyboardButton();
                     inlineKeyboardButton.setText(subscription.getSubscriptionState().getButtonName());
                     inlineKeyboardButton.setCallbackData(subscription.buildCallbackData());
 
                     return inlineKeyboardButton;
                 })
 
-                .multiResponseMessageHeader("Можливо ви мали на увазі щось з наступного..")
+                .multiResponseMessageHeader(":thinking: Можливо ви мали на увазі щось з наступного..")
                 .provideMultiResponseMessage(UserSubscription::buildSubscriptionMessage)
 
                 .build(filteredSubscriptions);

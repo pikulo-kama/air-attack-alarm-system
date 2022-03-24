@@ -6,12 +6,11 @@ import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import com.adrabazha.air.attack.alarm.system.service.DistrictService;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.telegram.AirRaidBot;
+import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -40,16 +39,12 @@ abstract class AirRaidApplicationListener<T extends ApplicationEvent & AirRaidEv
         subscribers.forEach(subscriber -> sendAlertMessage(district, subscriber));
     }
 
+    @SneakyThrows
     private void sendAlertMessage(District district, User subscriber) {
-        SendMessage airRaidAlertMessage = SendMessage.builder()
-                .chatId(subscriber.getChatId())
-                .text(messageFunction.apply(district, subscriber))
-                .build();
+        SendMessageWrapper wrapper = new SendMessageWrapper();
+        wrapper.setChatId(subscriber.getChatId());
+        wrapper.setText(messageFunction.apply(district, subscriber));
 
-        try {
-            bot.executeAsync(airRaidAlertMessage);
-        } catch (TelegramApiException exception) {
-            log.error(exception.getMessage());
-        }
+        bot.executeAsync(wrapper.build());
     }
 }

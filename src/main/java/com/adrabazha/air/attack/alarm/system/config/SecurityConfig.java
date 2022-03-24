@@ -1,7 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -12,7 +11,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-//                .antMatchers("/api/v1/districts/{\\w+}/toggleState").authenticated()
                 .antMatchers("/**").permitAll()
                     .and()
                 .csrf().disable();

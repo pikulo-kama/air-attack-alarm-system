@@ -4,22 +4,22 @@ import com.adrabazha.air.attack.alarm.system.event.AirRaidEndedEvent;
 import com.adrabazha.air.attack.alarm.system.event.AirRaidStartedEvent;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
 import com.adrabazha.air.attack.alarm.system.service.DistrictStateService;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 
 @Component
-public class ChangeAlarmStateCallbackHandler extends BaseCallbackHandler {
+public class AlarmStateChangeCallbackHandler extends BaseCallbackHandler {
 
     private final DistrictStateService districtStateService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public ChangeAlarmStateCallbackHandler(DistrictStateService districtStateService, ApplicationEventPublisher eventPublisher) {
+    public AlarmStateChangeCallbackHandler(DistrictStateService districtStateService, ApplicationEventPublisher eventPublisher) {
         this.districtStateService = districtStateService;
         this.eventPublisher = eventPublisher;
     }
@@ -40,7 +40,8 @@ public class ChangeAlarmStateCallbackHandler extends BaseCallbackHandler {
         wrapper.setChatId(callbackQuery.getMessage().getChatId().toString());
         wrapper.setMessageId(callbackQuery.getMessage().getMessageId());
 
-        InlineKeyboardButton button = new InlineKeyboardButton(updatedState.getAlarmState().getAlarmButtonContent());
+        CustomInlineKeyboardButton button = new CustomInlineKeyboardButton();
+        button.setText(updatedState.getAlarmState().getAlarmButtonContent());
         button.setCallbackData(updatedState.buildCallbackData());
         wrapper.addInlineButton(button);
 

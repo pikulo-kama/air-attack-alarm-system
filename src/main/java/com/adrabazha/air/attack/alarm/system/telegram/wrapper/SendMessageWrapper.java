@@ -1,10 +1,10 @@
 package com.adrabazha.air.attack.alarm.system.telegram.wrapper;
 
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomSendMessage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -46,16 +46,12 @@ public class SendMessageWrapper {
         replyMarkupEdited = isEdited;
     }
 
-    public void addInlineButton(InlineKeyboardButton button) {
-        addInlineButton(Collections.singletonList(button));
+    public void addInlineButton(CustomInlineKeyboardButton button) {
+        inlineKeyboard.add(Collections.singletonList(button));
     }
 
-    public void addInlineButton(List<InlineKeyboardButton> buttons) {
-        inlineKeyboard.add(buttons);
-    }
-
-    public SendMessage build() {
-        SendMessage sendMessage = new SendMessage();
+    public CustomSendMessage build() {
+        CustomSendMessage sendMessage = new CustomSendMessage();
         sendMessage.enableMarkdown(true);
 
         sendMessage.setText(text);

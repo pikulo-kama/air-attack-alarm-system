@@ -29,10 +29,6 @@ public class UserSubscription {
         return new UserSubscription(districtCode, districtName, isSubscribed);
     }
 
-    public Boolean isActive() {
-        return subscriptionState.equals(ENABLED);
-    }
-
     public String buildExtendedSubscriptionMessage() {
         return String.format(subscriptionState.getSubscriptionMessage(), districtName);
     }

@@ -1,6 +1,5 @@
 package com.adrabazha.air.attack.alarm.system.event;
 
-import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 public class AirRaidStartedEvent extends ApplicationEvent implements AirRaidEvent {

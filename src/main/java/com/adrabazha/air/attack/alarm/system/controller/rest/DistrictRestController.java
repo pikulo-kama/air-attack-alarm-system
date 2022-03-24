@@ -24,11 +24,6 @@ public class DistrictRestController {
         this.districtService = districtService;
     }
 
-//    @PutMapping("{key}/toggleState")
-//    public void updateDistrictListState(@PathVariable("key") String key) {
-//        districtObjectHolder.toggle(key);
-//    }
-
     @CrossOrigin
     @GetMapping("/geo")
     public List<DistrictMapStateObject> getDistrictMapObjects() {

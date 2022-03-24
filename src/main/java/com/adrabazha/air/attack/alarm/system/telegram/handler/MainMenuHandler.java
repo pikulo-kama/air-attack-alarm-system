@@ -4,6 +4,7 @@ import com.adrabazha.air.attack.alarm.system.service.UserService;
 import com.adrabazha.air.attack.alarm.system.service.UserStateService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.main_menu.AdminRequestCommandProcessor;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -21,19 +22,20 @@ public class MainMenuHandler extends BaseTelegramInputHandler<MainMenuHandler> {
 
     @Override
     public String defaultMessage() {
-        return "Привіт, я можу допомогти тобі отримувати актуальну інформацію про " +
-                "стан сирен в різних частинах України.\n\n" +
-                "Разом ми переможемо ворога\n" +
-                "Разом ми - сила\n" +
-                "Разом ми - Україна\n";
+        return "Привіт :wave:, я можу допомогти тобі отримувати актуальну інформацію про " +
+                "стан сирен в різних частинах України :face_with_monocle:.\n\n" +
+                "Разом ми переможемо ворога :couple_with_heart:\n" +
+                "Разом ми - сила :muscle:\n" +
+                "Разом ми - Україна :ua:\n";
     }
 
     @Override
     public List<KeyboardRow> getReplyKeyboard(Update update) {
         List<KeyboardRow> replyKeyboard = super.getReplyKeyboard(update);
 
+        String adminRequestCommand = EmojiParser.parseToUnicode(AdminRequestCommandProcessor.COMMAND_NAME);
         if (userService.isAdministrator(update)) {
-            replyKeyboard.removeIf(keyboardRow -> keyboardRow.contains(AdminRequestCommandProcessor.COMMAND_NAME));
+            replyKeyboard.removeIf(keyboardRow -> keyboardRow.contains(adminRequestCommand));
         }
         return replyKeyboard;
     }
