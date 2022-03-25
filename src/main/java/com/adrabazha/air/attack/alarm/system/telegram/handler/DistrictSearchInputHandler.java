@@ -2,12 +2,13 @@ package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.service.TelegramDistrictService;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.ConditionalSendMessageWrapperBuilder;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -22,9 +23,11 @@ public class DistrictSearchInputHandler extends BaseTelegramInputHandler<Distric
 
     public DistrictSearchInputHandler(
             List<CommandProcessor<DistrictSearchInputHandler>> processors,
-            UserStateService userStateService,
-            UserService userService, TelegramDistrictService telegramDistrictService) {
-        super(processors, userService, userStateService);
+            UserStateRedisService userStateRedisService,
+            UserService userService,
+            TelegramDistrictService telegramDistrictService,
+            ApplicationEventPublisher eventPublisher) {
+        super(processors, userService, userStateRedisService, eventPublisher);
         this.telegramDistrictService = telegramDistrictService;
     }
 

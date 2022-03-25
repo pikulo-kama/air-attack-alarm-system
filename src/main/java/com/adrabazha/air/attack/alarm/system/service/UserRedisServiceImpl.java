@@ -5,7 +5,7 @@ import com.adrabazha.air.attack.alarm.system.model.domain.District;
 import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
 import com.adrabazha.air.attack.alarm.system.repository.UserRepository;
-import com.adrabazha.air.attack.alarm.system.repository.UserStateRepository;
+import com.adrabazha.air.attack.alarm.system.repository.UserStateRedisRepository;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.MainMenuHandler;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,13 +16,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService, UserStateService, SubscriptionService {
+public class UserRedisServiceImpl implements UserService, UserStateRedisService, SubscriptionService {
 
-    private final UserStateRepository userStateRepository;
+    private final UserStateRedisRepository userStateRedisRepository;
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserStateRepository userStateRepository, UserRepository userRepository) {
-        this.userStateRepository = userStateRepository;
+    public UserRedisServiceImpl(UserStateRedisRepository userStateRedisRepository, UserRepository userRepository) {
+        this.userStateRedisRepository = userStateRedisRepository;
         this.userRepository = userRepository;
     }
 
@@ -55,9 +55,9 @@ public class UserServiceImpl implements UserService, UserStateService, Subscript
 
     @Override
     public UserState getOrCreateState(String userId) {
-        Optional<UserState> persistedState = userStateRepository.findById(userId);
+        Optional<UserState> persistedState = userStateRedisRepository.findById(userId);
 
-        return persistedState.orElseGet(() -> userStateRepository.save(
+        return persistedState.orElseGet(() -> userStateRedisRepository.save(
                 UserState.builder()
                         .userId(userId)
                         .currentHandler(MainMenuHandler.class.getName())
@@ -66,8 +66,8 @@ public class UserServiceImpl implements UserService, UserStateService, Subscript
 
     @Override
     public UserState updateState(UserState userState) {
-        userStateRepository.delete(userState);
-        return userStateRepository.save(userState);
+        userStateRedisRepository.delete(userState);
+        return userStateRedisRepository.save(userState);
     }
 
     @Override

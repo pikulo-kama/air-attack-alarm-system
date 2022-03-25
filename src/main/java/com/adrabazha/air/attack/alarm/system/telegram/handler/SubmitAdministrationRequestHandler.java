@@ -2,9 +2,10 @@ package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
 import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -18,8 +19,9 @@ public class SubmitAdministrationRequestHandler extends BaseTelegramInputHandler
     protected SubmitAdministrationRequestHandler(
             List<CommandProcessor<SubmitAdministrationRequestHandler>> commandProcessors,
             UserService userService,
-            UserStateService userStateService) {
-        super(commandProcessors, userService, userStateService);
+            UserStateRedisService userStateRedisService,
+            ApplicationEventPublisher eventPublisher) {
+        super(commandProcessors, userService, userStateRedisService, eventPublisher);
     }
 
     @Override

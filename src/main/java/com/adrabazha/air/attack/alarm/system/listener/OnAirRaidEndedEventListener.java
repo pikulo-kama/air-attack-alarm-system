@@ -4,6 +4,7 @@ import com.adrabazha.air.attack.alarm.system.event.AirRaidEndedEvent;
 import com.adrabazha.air.attack.alarm.system.service.DistrictService;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.telegram.AirRaidBot;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.ExecuteAsyncMessageCallback;
 import org.springframework.stereotype.Component;
 
 @Component

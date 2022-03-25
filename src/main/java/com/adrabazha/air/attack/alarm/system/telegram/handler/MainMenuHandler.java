@@ -1,10 +1,11 @@
 package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
 import com.adrabazha.air.attack.alarm.system.service.UserService;
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.main_menu.AdminRequestCommandProcessor;
 import com.vdurmont.emoji.EmojiParser;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -16,8 +17,9 @@ public class MainMenuHandler extends BaseTelegramInputHandler<MainMenuHandler> {
 
     public MainMenuHandler(List<CommandProcessor<MainMenuHandler>> processors,
                            UserService userService,
-                           UserStateService userStateService) {
-        super(processors, userService, userStateService);
+                           UserStateRedisService userStateRedisService,
+                           ApplicationEventPublisher eventPublisher) {
+        super(processors, userService, userStateRedisService, eventPublisher);
     }
 
     @Override

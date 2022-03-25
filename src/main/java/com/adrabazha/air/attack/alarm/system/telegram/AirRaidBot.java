@@ -1,26 +1,21 @@
 package com.adrabazha.air.attack.alarm.system.telegram;
 
+import com.adrabazha.air.attack.alarm.system.service.ChatHistoryRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomEditMessageText;
 import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomSendMessage;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.ExecuteAsyncMessageCallback;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
-import com.vdurmont.emoji.EmojiParser;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.internal.inject.Custom;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -39,24 +34,34 @@ public class AirRaidBot extends TelegramWebhookBot {
 
     private final TelegramCallbackQueryFacade telegramCallbackQueryFacade;
 
-    public AirRaidBot(TelegramUpdateFacade telegramUpdateFacade, TelegramCallbackQueryFacade telegramCallbackQueryFacade) {
+    private final ExecuteAsyncMessageCallback callback;
+
+    private final ChatHistoryRedisService chatHistoryRedisService;
+
+    public AirRaidBot(TelegramUpdateFacade telegramUpdateFacade,
+                      TelegramCallbackQueryFacade telegramCallbackQueryFacade,
+                      ExecuteAsyncMessageCallback callback,
+                      ChatHistoryRedisService chatHistoryRedisService) {
         this.telegramUpdateFacade = telegramUpdateFacade;
         this.telegramCallbackQueryFacade = telegramCallbackQueryFacade;
+        this.callback = callback;
+        this.chatHistoryRedisService = chatHistoryRedisService;
     }
 
     @Override
+    @SneakyThrows
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasCallbackQuery()) {
             return handleCallbackQuery(update);
         }
-
-        deleteMessageFromChat(update);
+        chatHistoryRedisService.addMessage(update.getMessage().getChatId(), update.getMessage().getMessageId());
 
         SendMessageWrapper wrapper = telegramUpdateFacade.handle(update);
-        SendMessage message = wrapper.build();
         sendKeyboard(wrapper);
 
-        return message;
+
+        executeAsync(wrapper.build(), callback);
+        return null;
     }
 
     @Override
@@ -96,19 +101,10 @@ public class AirRaidBot extends TelegramWebhookBot {
                         .keyboard(wrapper.getReplyKeyboard())
                         .build());
         try {
-            executeAsync(message);
+            executeAsync(message, callback);
         } catch (TelegramApiException exception) {
             log.error(exception.getMessage());
         }
-    }
-
-    @SneakyThrows
-    private void deleteMessageFromChat(Update update) {
-        DeleteMessage deleteMessage = new DeleteMessage();
-        deleteMessage.setChatId(update.getMessage().getChatId().toString());
-        deleteMessage.setMessageId(update.getMessage().getMessageId());
-
-        executeAsync(deleteMessage);
     }
 
     private EditMessageText getEditMessage(SendMessageWrapper wrapper) {

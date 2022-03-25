@@ -4,7 +4,7 @@ import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
 
 import java.util.List;
 
-public interface DistrictStateService {
+public interface DistrictStateRedisService {
 
     void initialize();
 

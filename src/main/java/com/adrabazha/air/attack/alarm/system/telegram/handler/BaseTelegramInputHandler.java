@@ -1,12 +1,14 @@
 package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
+import com.adrabazha.air.attack.alarm.system.event.FunctionalButtonClickedEvent;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.proxy.CommandProcessorWrapper;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import com.vdurmont.emoji.EmojiParser;
+import org.springframework.context.ApplicationEventPublisher;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -24,15 +26,18 @@ import static com.adrabazha.air.attack.alarm.system.utils.MessageConstants.START
 abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implements TelegramInputHandler {
 
     private final Map<String, CommandProcessor<T>> processors;
-    protected final UserStateService userStateService;
+    protected final UserStateRedisService userStateRedisService;
     protected final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
     protected BaseTelegramInputHandler(List<CommandProcessor<T>> processors,
                                        UserService userService,
-                                       UserStateService userStateService) {
+                                       UserStateRedisService userStateRedisService,
+                                       ApplicationEventPublisher eventPublisher) {
         this.processors = formatProcessors(processors);
-        this.userStateService = userStateService;
+        this.userStateRedisService = userStateRedisService;
         this.userService = userService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -43,14 +48,21 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
         if (processors.keySet().contains(command)) {
             CommandProcessorWrapper<T> processor = new CommandProcessorWrapper<>(processors.get(command), userService);
             wrapper = processor.process(update);
+            triggerChatHistoryDeletion(update);
 
         } else if (isInitialCommand(command)) {
             wrapper = buildInitialResponse(update);
+            triggerChatHistoryDeletion(update);
+
         } else {
             wrapper = handleDefault(update);
         }
         updateUserState(update);
         return wrapper;
+    }
+
+    private void triggerChatHistoryDeletion(Update update) {
+        eventPublisher.publishEvent(new FunctionalButtonClickedEvent(this, update.getMessage().getChatId()));
     }
 
     protected SendMessageWrapper buildInitialResponse(Update update) {
@@ -97,9 +109,9 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
     }
 
     private void updateUserState(Update update) {
-        UserState state = userStateService.getOrCreateState(update.getMessage().getFrom().getId().toString());
+        UserState state = userStateRedisService.getOrCreateState(update.getMessage().getFrom().getId().toString());
         state.setCurrentHandler(this.getClass().getName());
-        userStateService.updateState(state);
+        userStateRedisService.updateState(state);
     }
 
     private Map<String, CommandProcessor<T>> formatProcessors(List<CommandProcessor<T>> processors) {
