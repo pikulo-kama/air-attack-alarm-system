@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import FormControl from "react-bootstrap/FormControl";
 import axios from "axios";
-import {REACT_APP_BACKEND_URL} from "../constants/HttpConstants";
-import DropdownDistrictList from "../model/DropdownDistrictList";
+import {REACT_APP_DISTRICT_STATE_ENDPOINT} from "../constants/BackendRoutes";
+import DistrictList from "./DistrictList";
+import LocalStorageService from "../services/LocalStorageService";
 
 const CustomMenu = React.forwardRef(
     ({children, style, className, 'aria-labelledby': labeledBy}, ref) => {
-        const [value, setValue] = useState('');
-
         return (
             <div
                 ref={ref}
@@ -16,18 +14,8 @@ const CustomMenu = React.forwardRef(
                 className={className}
                 aria-labelledby={labeledBy}
             >
-                {/*<FormControl*/}
-                {/*    autoFocus*/}
-                {/*    className="mx-3 my-2 w-auto"*/}
-                {/*    placeholder="Введіть облцентр..."*/}
-                {/*    onChange={(e) => setValue(e.target.value)}*/}
-                {/*    value={value}*/}
-                {/*/>*/}
                 <ul className="list-unstyled" style={{height: "200px", overflowY: "auto"}}>
-                    {React.Children.toArray(children).filter(
-                        (child) =>
-                            !value || child.props.children.toLowerCase().startsWith(value)
-                    )}
+                    {children}
                 </ul>
             </div>
         );
@@ -38,10 +26,10 @@ export default function SelectBar() {
 
     const [districts, setDistricts] = useState([]);
     const [activeDistrictCode, setActiveDistrictCode] = useState( null);
-    const [activeDistrict, setActiveDistrict] = useState('Oбласний центр');
+    const [activeDistrict, setActiveDistrictName] = useState('Oбласний центр');
 
     function getDistricts() {
-        axios.get(REACT_APP_BACKEND_URL + '/api/v1/districts/states')
+        axios.get(REACT_APP_DISTRICT_STATE_ENDPOINT)
             .then(function (response) {
                 setDistricts(response.data);
             });
@@ -53,13 +41,16 @@ export default function SelectBar() {
         let hash = window.location.hash;
         hash !== '' && setActiveDistrictCode(String(hash).substring(1));
 
-        let active = districts.find(d => d['districtCode'] === activeDistrictCode);
-        active !== undefined && setActiveDistrict(active['districtName']);
+        let active = districts.find(district => district.districtCode === activeDistrictCode);
+        if (active !== undefined) {
+            setActiveDistrictName(active.districtName);
+            localStorage.clear();
+        }
     }, [getDistricts])
 
     function handleDistrictChange(key, event) {
         setActiveDistrictCode(String(key).substring(1));
-        setActiveDistrict(event.currentTarget.text);
+        setActiveDistrictName(event.currentTarget.text);
     }
 
     return (
@@ -69,7 +60,7 @@ export default function SelectBar() {
             </Dropdown.Toggle>
 
             <Dropdown.Menu as={CustomMenu} variant="outline-dark">
-                <DropdownDistrictList districts={districts} />
+                <DistrictList districts={districts} />
             </Dropdown.Menu>
         </Dropdown>
     );

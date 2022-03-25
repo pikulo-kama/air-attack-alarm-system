@@ -1,4 +1,4 @@
-export const UK_BORDERS_DATA = {
+export const UA_BORDERS_DATA = {
     "type": "FeatureCollection", "features": [{
         "geometry": {
             "type": "MultiPolygon",

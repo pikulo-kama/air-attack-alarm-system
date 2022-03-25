@@ -4,6 +4,9 @@ import Map from "./Map";
 import NavBar from "./Navbar";
 
 function App() {
+
+    localStorage.clear();
+
     return (
         <>
             <NavBar/>
