@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class AdminRequestCommandProcessor implements CommandProcessor<MainMenuHandler> {
 
-    public static final String COMMAND_NAME = "Хочу повідомляти про небезпеку :cowboy:";
+    public static final String COMMAND_NAME = "Хочу повідомляти про небезпеку :face_with_cowboy_hat:";
 
     @Override
     public SendMessageWrapper process(Update update) {
