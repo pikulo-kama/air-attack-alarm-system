@@ -4,51 +4,60 @@ import {REACT_APP_DISTRICT_STATE_ENDPOINT} from "../constants/BackendRoutes";
 import {GeoJSON} from "react-leaflet";
 import {alarmOffDistrictStyle, alarmOnDistrictStyle} from "../geodata/styles";
 import LocalStorageService from "../services/LocalStorageService"
-import DistrictStateService from "../services/DistrictStateService"
 import DistrictCodeHelper from "../helper/DistrictCodeHelper";
 import AlarmState from "../dto/AlarmState.ts";
+import {ALARM_MEDIA_NAME, WINDOW_REFRESH_RATE} from "../constants/SystemConstants";
+import StateObjectList from "../dto/StateObjectList";
+import DistrictGeoObject from "../dto/DistrictGeoObject";
 
 
-export default function GeoJson(props) {
+function GeoJson(props) {
 
-    const geoData = props.geoData;
-
-    const districtStateService = new DistrictStateService();
-
-    const [districtStates, setDistrictStates] = useState([]);
-
-    async function loadStates() {
-        let response = await axios.get(REACT_APP_DISTRICT_STATE_ENDPOINT);
-        let groupedResponse = districtStateService.hashGroupingByCode(response.data);
-        setDistrictStates(groupedResponse);
-    }
+    const geoData: Array<DistrictGeoObject> = props.geoData;
+    const [districtStates, setDistrictStates] = useState({});
 
     useEffect(() => {
-        let timerId = setInterval(() => loadStates(), 2000);
+        let timerId = setInterval(loadStates, WINDOW_REFRESH_RATE);
         return () => clearInterval(timerId);
     });
 
-    let activeDistrictCode = DistrictCodeHelper.getDistrictCode();
+    geoData.forEach(record => {
 
-    geoData.forEach(geo => {
+        if (isActiveDistrict(record)) {
 
-        if (geo.districtCode === activeDistrictCode) {
-            if (AlarmState[geo.alarmState] === AlarmState.ON &&
-                LocalStorageService.shouldPlayAlarm(activeDistrictCode)) {
-
-                new Audio("alarm.mp3").play();
-                LocalStorageService.updateDistrictState(activeDistrictCode, false);
-            } else if (AlarmState[geo.alarmState] === AlarmState.OFF) {
-                LocalStorageService.updateDistrictState(activeDistrictCode, true);
+            if (record.alarmState === AlarmState.ON && LocalStorageService.shouldPlayAlarm(record.districtCode)) {
+                playAlarmSound();
+                LocalStorageService.updateDistrictState(record.districtCode, false);
+            } else if (record.alarmState === AlarmState.OFF) {
+                LocalStorageService.updateDistrictState(record.districtCode, true);
             }
         }
 
-        geo.alarmState = districtStates[geo.districtCode];
+        record.updateAlarmState(districtStates);
     });
 
-    return geoData.map(district =>
+    return geoData.map(record =>
         <GeoJSON
-            data={JSON.parse(district.geoJson)}
-            style={district.alarmState === 'ON' ? alarmOnDistrictStyle : alarmOffDistrictStyle}
+            data={record.geoJson}
+            style={record.alarmState === AlarmState.ON ? alarmOnDistrictStyle : alarmOffDistrictStyle}
         />);
+
+
+
+    async function loadStates() {
+        let response = await axios.get(REACT_APP_DISTRICT_STATE_ENDPOINT);
+        let statesData = new StateObjectList(response.data).groupByCode()
+
+        setDistrictStates(statesData);
+    }
+
+    function isActiveDistrict(record: DistrictGeoObject): boolean {
+        return DistrictCodeHelper.getDistrictCode() === record.districtCode;
+    }
+
+    function playAlarmSound() {
+        new Audio(ALARM_MEDIA_NAME).play();
+    }
 }
+
+export default GeoJson

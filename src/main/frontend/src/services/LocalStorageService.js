@@ -1,5 +1,12 @@
+
 class LocalStorageService {
 
+    /**
+     * Checks whether alarm for current district could be played
+     * @param districtCode unique code of Ukraine district
+     *
+     * @return true if could be should be played, false - if not
+     * */
     static shouldPlayAlarm(districtCode: string): boolean {
         let couldBePlayed = localStorage.getItem(districtCode);
 
@@ -10,25 +17,9 @@ class LocalStorageService {
     }
 
     /**
-     *  Used to retrieve last observed alarm state from local storage
-     *  @param districtCode unique code of Ukraine district
-     *
-     *  @return ON/OFF
-     * **/
-    static #getDistrictState(districtCode: string): boolean {
-        if (districtCode === '') {
-            return true;
-        }
-        let isPlayed = localStorage.getItem(districtCode);
-
-        return isPlayed !== null ? isPlayed : false;
-    }
-
-
-    /**
      * Updates alarm state of district in local storage
      * @param districtCode unique code of Ukraine district
-     * @param alarmState state of alarm that should be stored in storage
+     * @param couldBePlayed used to define whether alarm for this district could be played
      * */
     static updateDistrictState(districtCode: string, couldBePlayed: boolean): void {
         localStorage.setItem(districtCode, couldBePlayed);

@@ -1,7 +1,8 @@
 import {Container, Nav, Navbar} from "react-bootstrap";
-import SelectBar from "./SelectBar";
+import DistrictDropdown from "./DistrictDropdown";
+import {LOGO_NAME} from "../constants/SystemConstants";
 
-export default function NavBar() {
+function NavBar() {
     return (
         <Navbar bg="light" expand="md">
             <Container>
@@ -24,15 +25,17 @@ export default function NavBar() {
                             c45.534-42.867,114.172-54.571,171.321-28.799c68.228,30.767,105.971,108.144,87.651,180.844
                             C405.459,245.986,402.37,254.739,398.59,263.184C396.502,267.81,400.132,259.739,398.59,263.184"/>
                     </svg>
-                    {'   '}УВАГА ТРИВОГА!
+                    {'   '}{LOGO_NAME}
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <SelectBar />
+                        <DistrictDropdown />
                     </Nav>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
     );
 }
+
+export default NavBar

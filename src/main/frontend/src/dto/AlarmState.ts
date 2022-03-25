@@ -1,8 +1,7 @@
 
 enum AlarmState {
     ON = "ON",
-    OFF = "OFF",
-    UNDEFINED = "UNDEFINED"
+    OFF = "OFF"
 }
 
 export default AlarmState

@@ -15,7 +15,6 @@ function App() {
                     <Map/>
                 </div>
             </div>
-            <audio id="alarm-media" preload="auto" src="../audio/alarm.mp3" />
         </>
     );
 }
