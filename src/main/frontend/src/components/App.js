@@ -4,6 +4,9 @@ import Map from "./Map";
 import NavBar from "./Navbar";
 
 function App() {
+
+    localStorage.clear();
+
     return (
         <>
             <NavBar/>
@@ -12,7 +15,6 @@ function App() {
                     <Map/>
                 </div>
             </div>
-            <audio id="alarm-media" preload="auto" src="../audio/alarm.mp3" />
         </>
     );
 }

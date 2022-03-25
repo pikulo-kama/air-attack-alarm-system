@@ -3,6 +3,7 @@ package com.adrabazha.air.attack.alarm.system.model.domain.redis;
 import com.adrabazha.air.attack.alarm.system.model.AlarmState;
 import com.adrabazha.air.attack.alarm.system.telegram.callback.AlarmStateChangeCallbackHandler;
 import com.adrabazha.air.attack.alarm.system.utils.CallbackDataHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,6 +38,7 @@ public class DistrictState {
                 .build();
     }
 
+    @JsonIgnore
     public String getStateMessage() {
         return String.format(alarmState.getStatusMessagePattern(), districtName);
     }
