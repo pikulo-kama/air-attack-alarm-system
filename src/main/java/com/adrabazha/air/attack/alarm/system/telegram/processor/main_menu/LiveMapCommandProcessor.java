@@ -21,7 +21,7 @@ public class LiveMapCommandProcessor implements CommandProcessor<MainMenuHandler
 
         String message = ":world_map: Даний сервіс дозволяє вам стежити за ситуацією в Україні в режимі LIVE.\n\n" +
                 "Заповнивши поле *\"Обласний центр\"* ви будете додатково отримувати сповіщення в формі :loudspeaker:," +
-                " як тільки в вашій області буде попередження про повітряну тривогу. :cowboy: :ua:";
+                " як тільки в вашій області буде попередження про повітряну тривогу. :face_with_cowboy_hat: :ua:";
         wrapper.setText(message);
 
         CustomInlineKeyboardButton openMapButton = new CustomInlineKeyboardButton();
