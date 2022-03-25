@@ -6,6 +6,7 @@ import com.adrabazha.air.attack.alarm.system.model.domain.User;
 import com.adrabazha.air.attack.alarm.system.service.DistrictService;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.telegram.AirRaidBot;
+import com.adrabazha.air.attack.alarm.system.telegram.custom.ExecuteAsyncMessageCallback;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

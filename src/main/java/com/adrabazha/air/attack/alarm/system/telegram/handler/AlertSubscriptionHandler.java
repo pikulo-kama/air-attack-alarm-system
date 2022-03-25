@@ -3,11 +3,12 @@ package com.adrabazha.air.attack.alarm.system.telegram.handler;
 import com.adrabazha.air.attack.alarm.system.dto.UserSubscription;
 import com.adrabazha.air.attack.alarm.system.service.SubscriptionService;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.processor.CommandProcessor;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.ConditionalSendMessageWrapperBuilder;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -21,9 +22,10 @@ public class AlertSubscriptionHandler extends BaseTelegramInputHandler<AlertSubs
 
     public AlertSubscriptionHandler(List<CommandProcessor<AlertSubscriptionHandler>> commandProcessors,
                                     UserService userService,
-                                    UserStateService userStateService,
-                                    SubscriptionService subscriptionService) {
-        super(commandProcessors, userService, userStateService);
+                                    UserStateRedisService userStateRedisService,
+                                    SubscriptionService subscriptionService,
+                                    ApplicationEventPublisher eventPublisher) {
+        super(commandProcessors, userService, userStateRedisService, eventPublisher);
         this.subscriptionService = subscriptionService;
     }
 

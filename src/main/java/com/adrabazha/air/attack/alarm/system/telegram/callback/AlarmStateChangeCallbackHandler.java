@@ -3,7 +3,7 @@ package com.adrabazha.air.attack.alarm.system.telegram.callback;
 import com.adrabazha.air.attack.alarm.system.event.AirRaidEndedEvent;
 import com.adrabazha.air.attack.alarm.system.event.AirRaidStartedEvent;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
-import com.adrabazha.air.attack.alarm.system.service.DistrictStateService;
+import com.adrabazha.air.attack.alarm.system.service.DistrictStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.custom.CustomInlineKeyboardButton;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import org.springframework.context.ApplicationEvent;
@@ -16,23 +16,23 @@ import java.util.List;
 @Component
 public class AlarmStateChangeCallbackHandler extends BaseCallbackHandler {
 
-    private final DistrictStateService districtStateService;
+    private final DistrictStateRedisService districtStateRedisService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public AlarmStateChangeCallbackHandler(DistrictStateService districtStateService, ApplicationEventPublisher eventPublisher) {
-        this.districtStateService = districtStateService;
+    public AlarmStateChangeCallbackHandler(DistrictStateRedisService districtStateRedisService, ApplicationEventPublisher eventPublisher) {
+        this.districtStateRedisService = districtStateRedisService;
         this.eventPublisher = eventPublisher;
     }
 
     @Override
     public SendMessageWrapper handle(CallbackQuery callbackQuery, List<String> data) {
         String districtCode = data.get(0);
-        DistrictState districtState = districtStateService.getDistrictState(districtCode);
+        DistrictState districtState = districtStateRedisService.getDistrictState(districtCode);
         districtState.toggleAlarm();
 
         sendAirRaidNotification(districtState);
 
-        DistrictState updatedState = districtStateService.updateDistrictState(districtState);
+        DistrictState updatedState = districtStateRedisService.updateDistrictState(districtState);
 
         SendMessageWrapper wrapper = new SendMessageWrapper();
         wrapper.replyMarkupEdited(true);

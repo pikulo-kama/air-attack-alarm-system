@@ -5,7 +5,7 @@ import com.adrabazha.air.attack.alarm.system.model.AlarmState;
 import com.adrabazha.air.attack.alarm.system.model.domain.District;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
 import com.adrabazha.air.attack.alarm.system.repository.DistrictRepository;
-import com.adrabazha.air.attack.alarm.system.repository.DistrictStateRepository;
+import com.adrabazha.air.attack.alarm.system.repository.DistrictStateRedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +16,16 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Service
-public class DistrictServiceImpl implements DistrictService, DistrictStateService {
+public class DistrictRedisServiceImpl implements DistrictService, DistrictStateRedisService {
 
     private final DistrictRepository districtRepository;
-    private final DistrictStateRepository districtStateRepository;
+    private final DistrictStateRedisRepository districtStateRedisRepository;
 
     @Autowired
-    public DistrictServiceImpl(DistrictRepository districtRepository,
-                               DistrictStateRepository districtStateRepository) {
+    public DistrictRedisServiceImpl(DistrictRepository districtRepository,
+                                    DistrictStateRedisRepository districtStateRedisRepository) {
         this.districtRepository = districtRepository;
-        this.districtStateRepository = districtStateRepository;
+        this.districtStateRedisRepository = districtStateRedisRepository;
     }
 
     @Override
@@ -72,30 +72,30 @@ public class DistrictServiceImpl implements DistrictService, DistrictStateServic
                 .map(this::mapToDistrictState)
                 .collect(Collectors.toList());
 
-        districtStateRepository.saveAll(statesToBeCached);
+        districtStateRedisRepository.saveAll(statesToBeCached);
     }
 
     @Override
     public List<DistrictState> findAllStates() {
-        return (List<DistrictState>) districtStateRepository.findAll();
+        return (List<DistrictState>) districtStateRedisRepository.findAll();
     }
 
     @Override
     public DistrictState getDistrictState(String districtCode) {
-        Optional<DistrictState> districtState = districtStateRepository.findById(districtCode);
+        Optional<DistrictState> districtState = districtStateRedisRepository.findById(districtCode);
 
         if (districtState.isPresent()) {
             return districtState.get();
         }
 
         District district = findByCode(districtCode);
-        return districtStateRepository.save(mapToDistrictState(district));
+        return districtStateRedisRepository.save(mapToDistrictState(district));
     }
 
     @Override
     public DistrictState updateDistrictState(DistrictState updatedState) {
-        districtStateRepository.deleteById(updatedState.getDistrictCode());
-        return districtStateRepository.save(updatedState);
+        districtStateRedisRepository.deleteById(updatedState.getDistrictCode());
+        return districtStateRedisRepository.save(updatedState);
     }
 
     private Boolean relatesToDistrict(DistrictState state, District district) {

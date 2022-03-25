@@ -1,6 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.telegram;
 
-import com.adrabazha.air.attack.alarm.system.service.UserStateService;
+import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
 import com.adrabazha.air.attack.alarm.system.telegram.wrapper.SendMessageWrapper;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
 import com.adrabazha.air.attack.alarm.system.telegram.handler.TelegramInputHandler;
@@ -22,34 +22,31 @@ import static com.adrabazha.air.attack.alarm.system.utils.MessageConstants.RETUR
 @Slf4j
 public class TelegramUpdateFacade {
 
-    private final UserStateService userStateService;
+    private final UserStateRedisService userStateRedisService;
     private final Map<? extends Class<? extends TelegramInputHandler>, TelegramInputHandler> handlers;
 
-    public TelegramUpdateFacade(UserStateService userStateService, List<TelegramInputHandler> handlers) {
-        this.userStateService = userStateService;
+    public TelegramUpdateFacade(UserStateRedisService userStateRedisService, List<TelegramInputHandler> handlers) {
+        this.userStateRedisService = userStateRedisService;
         this.handlers = handlers.stream().collect(Collectors.toMap(TelegramInputHandler::getClass, handler -> handler));
     }
 
     public SendMessageWrapper handle(Update update) {
         SendMessageWrapper wrappedMessage = null;
-        UserState userState = userStateService.getOrCreateState(update.getMessage().getFrom().getId().toString());
+        UserState userState = userStateRedisService.getOrCreateState(update.getMessage().getFrom().getId().toString());
 
         try {
             Class<?> handlerClassName = Class.forName(userState.getCurrentHandler());
             TelegramInputHandler handler = handlers.get(handlerClassName);
 
             if (isReturnCommand(update) && handler.hasPredecessor()) {
-                userState.setCurrentHandler(handler.getPredecessor().getName());
-                userStateService.updateState(userState);
-
-                update.getMessage().setText(BUILD_WINDOW_COMMAND);
                 handler = handlers.get(handler.getPredecessor());
+                setBuildWindowCommand(update);
             }
             Optional<Class<? extends TelegramInputHandler>> redirect = handler.getRedirectCommand(update);
 
             if (redirect.isPresent()) {
                 handler = handlers.get(redirect.get());
-                update.getMessage().setText(BUILD_WINDOW_COMMAND);
+                setBuildWindowCommand(update);
             }
 
             HandlerWrapper wrapper = new HandlerWrapper(handler);
@@ -59,6 +56,10 @@ public class TelegramUpdateFacade {
             log.error(exception.getMessage());
         }
         return wrappedMessage;
+    }
+
+    private void setBuildWindowCommand(Update update) {
+        update.getMessage().setText(BUILD_WINDOW_COMMAND);
     }
 
     private Boolean isReturnCommand(Update update) {
