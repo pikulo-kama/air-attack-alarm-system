@@ -5,25 +5,34 @@ import ViewMode from "./ViewMode";
 import {useSelector} from "react-redux";
 import {getActiveModeDataSelector} from "../features/viewModeSlice";
 
-const NavBar = ({ districtStateList }) => {
+const NavBar = ({districtStateList}) => {
 
     const activeViewModeData = useSelector(getActiveModeDataSelector)
 
     return (
-        <Navbar expand="md">
-            <Container>
-                <Navbar.Brand>
-                    <Logo />{'   '}<text style={{color: activeViewModeData.textColor}}>{'УВАГА ТРИВОГА!'}</text>
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        <DistrictList districtStateList={districtStateList} />
-                    </Nav>
-                    <ViewMode />
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginRight: '.5rem'
+            }}
+        >
+            <Navbar expand="md">
+                <Container>
+                    <Navbar.Brand>
+                        <Logo/>{'   '}
+                        <text style={{color: activeViewModeData.textColor}}>{'УВАГА ТРИВОГА!'}</text>
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <DistrictList districtStateList={districtStateList}/>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+            <ViewMode/>
+        </div>
     );
 }
 
