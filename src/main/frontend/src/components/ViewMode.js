@@ -16,8 +16,9 @@ const ViewMode = () => {
             <Icon
                 size={25}
                 style={{
-                color: activeModeData.iconColor
-            }} />
+                    color: activeModeData.iconColor
+                }}
+            />
         </button>
     )
 }

@@ -1,5 +1,6 @@
 import {FaMoon, FaSun} from "react-icons/fa";
 import {createSlice} from "@reduxjs/toolkit";
+import {MAP_TILER_KEY} from "../constants";
 
 
 const VIEW_MODE = 'viewMode'
@@ -17,7 +18,7 @@ export const viewModeSlice = createSlice({
                 iconColor: '#F77E21',
                 primaryColor: '#FFF',
                 textColor: '#000',
-                baseMap: 'https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=dm8A81cL8t5oeZpgxXbY',
+                baseMap: `https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=${MAP_TILER_KEY}`,
                 dropdownVariant: 'outline-dark',
                 dropdownMenuStyle: {
                     background: 'white'
