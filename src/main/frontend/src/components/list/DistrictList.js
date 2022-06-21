@@ -7,13 +7,13 @@ import {
     tryToRestoreFromHash,
     useGetActiveDistrictSelector
 } from "../../features/activeDistrictSlice";
-import {useGetActiveModeDataSelector} from "../../features/viewModeSlice";
+import {getActiveModeDataSelector} from "../../features/viewModeSlice";
 
 const DistrictList = ({ districtStateList }) => {
 
     const dispatch = useDispatch()
     const activeDistrict = useSelector(useGetActiveDistrictSelector)
-    const activeModeData = useSelector(useGetActiveModeDataSelector)
+    const activeModeData = useSelector(getActiveModeDataSelector)
 
     useEffect(() => {
         dispatch(tryToRestoreFromHash(districtStateList))

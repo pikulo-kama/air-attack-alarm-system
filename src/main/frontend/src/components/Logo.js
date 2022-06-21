@@ -1,9 +1,9 @@
 import {useSelector} from "react-redux";
-import {useGetActiveModeDataSelector} from "../features/viewModeSlice";
+import {getActiveModeDataSelector} from "../features/viewModeSlice";
 
 const Logo = () => {
 
-    const activeModeData = useSelector(useGetActiveModeDataSelector)
+    const activeModeData = useSelector(getActiveModeDataSelector)
 
     return (
         <svg version="1.1" id="Layer_1" width="40px" height="40px"

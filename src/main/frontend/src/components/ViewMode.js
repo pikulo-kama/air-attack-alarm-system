@@ -1,11 +1,11 @@
 import {useDispatch, useSelector} from "react-redux";
-import {switchMode, useGetActiveModeDataSelector} from "../features/viewModeSlice";
+import {switchMode, getActiveModeDataSelector} from "../features/viewModeSlice";
 
 const ViewMode = () => {
 
     const dispatch = useDispatch()
 
-    const activeModeData = useSelector(useGetActiveModeDataSelector)
+    const activeModeData = useSelector(getActiveModeDataSelector)
     const Icon = activeModeData.icon
 
     return (

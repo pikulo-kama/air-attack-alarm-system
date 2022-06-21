@@ -25,7 +25,8 @@ export const viewModeSlice = createSlice({
                 },
                 logo: {
                     upperBand: '#338AF3',
-                    lowerBand: '#FFDA44'
+                    lowerBand: '#FFDA44',
+                    favicon: 'favicon-light.ico'
                 }
             },
             dark: {
@@ -40,7 +41,8 @@ export const viewModeSlice = createSlice({
                 },
                 logo: {
                     upperBand: '#CD0000',
-                    lowerBand: '#000000'
+                    lowerBand: '#000000',
+                    favicon: 'favicon-dark.ico'
                 }
             }
         }
@@ -49,6 +51,9 @@ export const viewModeSlice = createSlice({
         switchMode: (state) => {
             const newMode = state.active === LIGHT_MODE ? DARK_MODE: LIGHT_MODE
             localStorage.setItem(VIEW_MODE, newMode)
+
+            const favicon = document.getElementById('favicon')
+            favicon.href = `/${state.modes[newMode].logo.favicon}`
 
             return {...state, active: newMode}
         }
@@ -59,10 +64,10 @@ export const {
     switchMode
 } = viewModeSlice.actions
 
-export const useGetActiveModeSelector = (state) => state.viewMode.active
+export const getActiveModeSelector = (state) => state.viewMode.active
 
-export const useGetLightModeDataSelector = (state) => state.viewMode.modes.light
-export const useGetDarkModeDataSelector = (state) => state.viewMode.modes.dark
-export const useGetActiveModeDataSelector = (state) => state.viewMode.modes[state.viewMode.active]
+export const getLightModeDataSelector = (state) => state.viewMode.modes.light
+export const getDarkModeDataSelector = (state) => state.viewMode.modes.dark
+export const getActiveModeDataSelector = (state) => state.viewMode.modes[state.viewMode.active]
 
 export default viewModeSlice.reducer

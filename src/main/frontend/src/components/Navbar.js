@@ -3,11 +3,11 @@ import DistrictList from "./list/DistrictList";
 import Logo from "./Logo";
 import ViewMode from "./ViewMode";
 import {useSelector} from "react-redux";
-import {useGetActiveModeDataSelector} from "../features/viewModeSlice";
+import {getActiveModeDataSelector} from "../features/viewModeSlice";
 
 const NavBar = ({ districtStateList }) => {
 
-    const activeViewModeData = useSelector(useGetActiveModeDataSelector)
+    const activeViewModeData = useSelector(getActiveModeDataSelector)
 
     return (
         <Navbar expand="md">
