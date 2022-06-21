@@ -52,17 +52,25 @@ export const viewModeSlice = createSlice({
             const newMode = state.active === LIGHT_MODE ? DARK_MODE: LIGHT_MODE
             localStorage.setItem(VIEW_MODE, newMode)
 
-            const favicon = document.getElementById('favicon')
-            favicon.href = `/${state.modes[newMode].logo.favicon}`
+            setFaviconFunc(state.modes[newMode].logo.favicon)
 
             return {...state, active: newMode}
+        },
+        setFavicon: (state) => {
+            setFaviconFunc(state.modes[state.active].logo.favicon)
         }
     }
 })
 
 export const {
-    switchMode
+    switchMode,
+    setFavicon
 } = viewModeSlice.actions
+
+const setFaviconFunc = (faviconFileName) => {
+    const favicon = document.getElementById('favicon')
+    favicon.href = `/${faviconFileName}`
+}
 
 export const getActiveModeSelector = (state) => state.viewMode.active
 

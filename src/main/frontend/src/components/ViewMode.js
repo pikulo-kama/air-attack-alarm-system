@@ -1,5 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
-import {switchMode, getActiveModeDataSelector} from "../features/viewModeSlice";
+import {switchMode, getActiveModeDataSelector, setFavicon} from "../features/viewModeSlice";
+import {useEffect} from "react";
 
 const ViewMode = () => {
 
@@ -7,6 +8,10 @@ const ViewMode = () => {
 
     const activeModeData = useSelector(getActiveModeDataSelector)
     const Icon = activeModeData.icon
+
+    useEffect(() => {
+        dispatch(setFavicon())
+    })
 
     return (
         <button
