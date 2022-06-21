@@ -1,6 +1,5 @@
 package com.adrabazha.air.attack.alarm.system.service;
 
-import com.adrabazha.air.attack.alarm.system.dto.DistrictMapStateObject;
 import com.adrabazha.air.attack.alarm.system.model.AlarmState;
 import com.adrabazha.air.attack.alarm.system.model.domain.District;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.DistrictState;
@@ -38,23 +37,6 @@ public class DistrictRedisServiceImpl implements DistrictService, DistrictStateR
         return districtRepository.findByCode(districtCode)
                 .orElseThrow(() ->
                         new RuntimeException(format("'%s' is incorrect district code", districtCode)));
-    }
-
-    @Override
-    public List<DistrictMapStateObject> getGeoData() {
-        List<District> districts = findAll();
-        List<DistrictState> states = findAllStates();
-
-        return districts.stream()
-                .map(district -> {
-                    DistrictState state = states
-                            .stream()
-                            .filter(innerState -> relatesToDistrict(innerState, district))
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("District not found"));
-
-                    return DistrictMapStateObject.fromDistrictAndState(district, state);
-                }).collect(Collectors.toList());
     }
 
     @Override

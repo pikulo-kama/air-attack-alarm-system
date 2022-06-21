@@ -1,41 +1,91 @@
-import React, {useEffect, useState} from 'react';
-import {GeoJSON, MapContainer, TileLayer} from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import {REACT_APP_DISTRICT_GEO_ENDPOINT} from "../constants/BackendRoutes";
-import axios from "axios";
-import GeoJson from "./GeoJson";
-import {UA_BORDERS_DATA} from "../geodata/ukraine_borders";
-import {alarmOffDistrictStyle} from "../geodata/styles";
-import DistrictGeoObject from "../dto/DistrictGeoObject";
+import 'leaflet/dist/leaflet.css'
+import L from "leaflet"
+import React, {useEffect, useState} from 'react'
+import {GeoJSON, MapContainer} from 'react-leaflet'
+import UA_BORDERS from "../geo/contryBorders"
+import {useSelector} from "react-redux";
+import {districtGeoJsonCollection} from "../geo/districtGeoJsonCollection";
+import {
+    DARK_MODE,
+    LIGHT_MODE,
+    useGetActiveModeSelector,
+    useGetDarkModeDataSelector,
+    useGetLightModeDataSelector
+} from "../features/viewModeSlice";
 
 
-function Map() {
+const Map = ({ districtStateList: alarmStates }) => {
 
-    const [geoData, setGeoData] = useState([]);
+    const [map, setMap] = useState(null)
+
+    const activeMode = useSelector(useGetActiveModeSelector)
+    const darkModeData = useSelector(useGetDarkModeDataSelector)
+    const lightModeData = useSelector(useGetLightModeDataSelector)
 
     useEffect(() => {
-        axios.get(REACT_APP_DISTRICT_GEO_ENDPOINT)
-            .then(function (response) {
-                let obtainedData = response.data.map(record => new DistrictGeoObject(record));
-                setGeoData(obtainedData);
-            });
-    }, []);
+        if (!map) return
+
+        const countryBorders = L.geoJSON(UA_BORDERS, {
+            style: function () {
+                return {
+                    color: '#fff',
+                    fillOpacity: .4,
+                    fillColor: '#000'
+                }
+            },
+            weight: 1,
+        }).addTo(map)
+
+        const newZoom = map.getBoundsZoom(countryBorders.getBounds(), false, undefined)
+        map.setZoom(newZoom)
+
+        map.setMaxBounds(countryBorders.getBounds())
+        map.fitBounds(countryBorders.getBounds(), {reset: true})
+
+    }, [map, setMap])
+
+
+    useEffect(() => {
+        if (!map) return
+
+        let lightBaseMap = new L.TileLayer(lightModeData.baseMap)
+        let darkBaseMap = new L.TileLayer(darkModeData.baseMap)
+
+        if (activeMode === LIGHT_MODE) {
+            map.removeLayer(darkBaseMap)
+            map.addLayer(lightBaseMap)
+        } else if (activeMode === DARK_MODE) {
+            map.removeLayer(lightBaseMap)
+            map.addLayer(darkBaseMap)
+        }
+
+    }, [map, setMap, activeMode]);
 
     return (
         <MapContainer
-            center={[48.379433, 31.165581]}
-            zoom={5.5}
-            style={{width: '100vw', height: '85vh'}}
-            bounds={[[22.10166, 44.02738], [40.25842, 52.42326]]}
+            center={[48.3794, 31.1656]}
+            zoom={2}
+            zoomSnap={false}
+            style={{
+                width: '100vw', height: '85vh', background: 'black'
+            }}
+            whenCreated={setMap}
         >
-            <TileLayer
-                url="https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=dm8A81cL8t5oeZpgxXbY"
-                attribution='<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
-            />
-            <GeoJSON data={UA_BORDERS_DATA} style={alarmOffDistrictStyle} />
-            <GeoJson geoData={geoData}/>
+            {
+                (alarmStates ?? []).map(alarmState =>
+                    <GeoJSON
+                        key={alarmState.districtCode}
+                        data={districtGeoJsonCollection[alarmState.districtCode]}
+                        style={{
+                            color: alarmState.alarmState === 'ON' ? 'red' : 'transparent',
+                            fillOpacity: .4
+                        }}
+                        weight={1}
+                    />
+                )
+            }
         </MapContainer>
-    );
+    )
 }
 
 export default Map

@@ -19,13 +19,4 @@ telegram:
 frontend.url: ${FRONTEND_URL}
 
 server:
-  port: 8443
-  ssl:
-    key-alias: ${JKS_KEY_ALIAS}
-    key-store-type: JKS
-    key-store-password: ${JKS_KEYSTORE_PASSWORD}
-    key-password: ${JKS_KEY_PASSWORD}
-#    key-store: ${JKS_KEYSTORE_NAME}
-    trust-store-type: JKS
-    trust-store: ${JKS_TRUSTSTORE_NAME}
-    trust-store-password: ${JKS_TRUSTSTORE_PASSWORD}
+  port: 8080

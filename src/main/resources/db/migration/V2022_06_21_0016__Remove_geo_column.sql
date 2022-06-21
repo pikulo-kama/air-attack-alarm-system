@@ -1,0 +1,1 @@
+ALTER TABLE districts DROP COLUMN "geo_json";

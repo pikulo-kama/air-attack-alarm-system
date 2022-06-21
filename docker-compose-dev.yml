@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: src/main/frontend
+      dockerfile: dev.Dockerfile
+      args:
+        BACKEND_APP_URL: ${DEV_BACKEND_URL}
+    container_name: 3as-dev-frontend
+    ports:
+      - '${DEV_FRONTEND_PORT}:3000'
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - dev-3as
+
+  backend:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: 3as-dev-backend
+    ports:
+      - '${DEV_BACKEND_PORT}:8080'
+    environment:
+      AAAS_POSTGRES_URL: ${DEV_POSTGRES_DB_URL}
+      AAAS_POSTGRES_USER: ${DEV_POSTGRES_DB_USER}
+      AAAS_POSTGRES_PASS: ${DEV_POSTGRES_DB_PASS}
+      TELEGRAM_BOT_TOKEN: ${DEV_TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${DEV_TELEGRAM_BOT_USERNAME}
+      TELEGRAM_BOT_WEBHOOK_PATH: ${DEV_TELEGRAM_BOT_WEBHOOK_PATH}
+      FRONTEND_URL: ${DEV_FRONTEND_URL}
+      REDIS_HOST: ${DEV_REDIS_HOST}
+      REDIS_PORT: ${DEV_REDIS_PORT}
+      REDIS_PASS: ${DEV_REDIS_PASSWORD}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - dev-3as
+
+  postgres:
+    container_name: 3as-dev-postgres-db
+    image: 'postgres:13.1-alpine'
+    restart: always
+    ports:
+      - '${DEV_POSTGRES_PORT}:5432'
+    environment:
+      POSTGRES_DB: ${DEV_POSTGRES_DB_NAME}
+      POSTGRES_USER: ${DEV_POSTGRES_DB_USER}
+      POSTGRES_PASSWORD: ${DEV_POSTGRES_DB_PASS}
+    volumes:
+      - dev-pg-data:/var/lib/postgresql/data
+    networks:
+      - dev-3as
+
+  redis:
+    container_name: 3as-dev-redis-db
+    image: 'bitnami/redis:6.0.16'
+    restart: always
+    ports:
+      - '${DEV_REDIS_PORT}:6379'
+    environment:
+      REDIS_PASSWORD: ${DEV_REDIS_PASSWORD}
+    networks:
+      - dev-3as
+
+volumes:
+  dev-pg-data:
+    driver: local
+
+networks:
+  dev-3as:
+    driver: bridge

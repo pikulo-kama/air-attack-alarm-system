@@ -1,22 +1,27 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/App.css';
 import Map from "./Map";
 import NavBar from "./Navbar";
+import {useGetDistrictStatesQuery} from "../api/alarmStateApi";
+import {DATA_REFRESH_RATE} from "../constants";
+import {useSelector} from "react-redux";
+import {useGetActiveModeDataSelector} from "../features/viewModeSlice";
 
-function App() {
+const App = () => {
 
-    localStorage.clear();
+    const {data: districtStateList} = useGetDistrictStatesQuery(null, {
+        pollingInterval: DATA_REFRESH_RATE
+    })
+
+    const activeViewModeData = useSelector(useGetActiveModeDataSelector)
 
     return (
-        <>
-            <NavBar/>
-            <div className="d-flex flex-row justify-content-end">
-                <div className="d-flex justify-content-end">
-                    <Map/>
-                </div>
-            </div>
-        </>
+        <section className='main-container' style={{
+            background: activeViewModeData.primaryColor
+        }}>
+            <NavBar districtStateList={districtStateList} />
+            <Map districtStateList={districtStateList} />
+        </section>
     );
 }
 
-export default App;
+export default App

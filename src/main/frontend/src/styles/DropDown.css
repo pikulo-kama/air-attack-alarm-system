@@ -1,8 +1,0 @@
-.dropdown-menu.show {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-
-.DropDown {
-    width: 50vw;
-}
