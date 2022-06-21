@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: 3as-frontend
+    build:
+      context: src/main/frontend
+      args:
+        BACKEND_APP_URL: ${BACKEND_URL}
+        SSL_CERT_PATH: ${SSL_CERT_PATH}
+        SSL_KEY_PATH: ${SSL_KEY_PATH}
+        DATA_REFRESH_RATE: ${DATA_REFRESH_RATE}
+    ports:
+      - '${FRONTEND_PORT}:3000'
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - 3as
+
+  backend:
+    container_name: 3as-backend
+    build:
+      context: .
+    ports:
+      - '${BACKEND_PORT}:8443'
+    environment:
+      AAAS_POSTGRES_URL: ${DB_POSTGRES_URL}
+      AAAS_POSTGRES_USER: ${DB_POSTGRES_USER}
+      AAAS_POSTGRES_PASS: ${DB_POSTGRES_PASS}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_USERNAME: ${TELEGRAM_BOT_USERNAME}
+      TELEGRAM_BOT_WEBHOOK_PATH: ${TELEGRAM_BOT_WEBHOOK_PATH}
+      FRONTEND_URL: ${FRONTEND_URL}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASS: ${REDIS_PASSWORD}
+      JKS_KEYSTORE_NAME: ${JKS_KEYSTORE_NAME}
+      JKS_KEY_ALIAS: ${JKS_KEY_ALIAS}
+      JKS_KEYSTORE_PASSWORD: ${JKS_KEYSTORE_PASSWORD}
+      JKS_KEY_PASSWORD: ${JKS_KEY_PASSWORD}
+      JKS_TRUSTSTORE_NAME: ${JKS_TRUSTSTORE_NAME}
+      JKS_TRUSTSTORE_PASSWORD: ${JKS_TRUSTSTORE_PASSWORD}
+    networks:
+      - 3as
+
+networks:
+  3as:
+    driver: bridge

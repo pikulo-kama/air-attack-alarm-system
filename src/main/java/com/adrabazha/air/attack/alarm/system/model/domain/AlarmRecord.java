@@ -1,6 +1,5 @@
 package com.adrabazha.air.attack.alarm.system.model.domain;
 
-import com.adrabazha.air.attack.alarm.system.model.AlarmState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.adrabazha.air.attack.alarm.system.telegram.handler;
 
-import com.adrabazha.air.attack.alarm.system.event.FunctionalButtonClickedEvent;
+import com.adrabazha.air.attack.alarm.system.event.ButtonClickedEvent;
 import com.adrabazha.air.attack.alarm.system.model.domain.redis.UserState;
 import com.adrabazha.air.attack.alarm.system.service.UserService;
 import com.adrabazha.air.attack.alarm.system.service.UserStateRedisService;
@@ -62,7 +62,7 @@ abstract class BaseTelegramInputHandler<T extends TelegramInputHandler> implemen
     }
 
     private void triggerChatHistoryDeletion(Update update) {
-        eventPublisher.publishEvent(new FunctionalButtonClickedEvent(this, update.getMessage().getChatId()));
+        eventPublisher.publishEvent(new ButtonClickedEvent(this, update.getMessage().getChatId()));
     }
 
     protected SendMessageWrapper buildInitialResponse(Update update) {
