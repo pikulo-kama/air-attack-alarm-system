@@ -8,9 +8,9 @@ import {districtGeoJsonCollection} from "../geo/districtGeoJsonCollection";
 import {
     DARK_MODE,
     LIGHT_MODE,
-    useGetActiveModeSelector,
-    useGetDarkModeDataSelector,
-    useGetLightModeDataSelector
+    getActiveModeSelector,
+    getDarkModeDataSelector,
+    getLightModeDataSelector
 } from "../features/viewModeSlice";
 
 
@@ -18,9 +18,9 @@ const Map = ({ districtStateList: alarmStates }) => {
 
     const [map, setMap] = useState(null)
 
-    const activeMode = useSelector(useGetActiveModeSelector)
-    const darkModeData = useSelector(useGetDarkModeDataSelector)
-    const lightModeData = useSelector(useGetLightModeDataSelector)
+    const activeMode = useSelector(getActiveModeSelector)
+    const darkModeData = useSelector(getDarkModeDataSelector)
+    const lightModeData = useSelector(getLightModeDataSelector)
 
     useEffect(() => {
         if (!map) return
