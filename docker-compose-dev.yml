@@ -7,6 +7,8 @@ services:
       dockerfile: dev.Dockerfile
       args:
         BACKEND_APP_URL: ${DEV_BACKEND_URL}
+        DATA_REFRESH_RATE: ${DATA_REFRESH_RATE}
+        MAP_TILER_KEY: ${MAP_TILER_KEY}
     container_name: 3as-dev-frontend
     ports:
       - '${DEV_FRONTEND_PORT}:3000'

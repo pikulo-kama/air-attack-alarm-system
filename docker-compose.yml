@@ -7,9 +7,10 @@ services:
       context: src/main/frontend
       args:
         BACKEND_APP_URL: ${BACKEND_URL}
+        DATA_REFRESH_RATE: ${DATA_REFRESH_RATE}
+        MAP_TILER_KEY: ${MAP_TILER_KEY}
         SSL_CERT_PATH: ${SSL_CERT_PATH}
         SSL_KEY_PATH: ${SSL_KEY_PATH}
-        DATA_REFRESH_RATE: ${DATA_REFRESH_RATE}
     ports:
       - '${FRONTEND_PORT}:3000'
     restart: always
